@@ -186,7 +186,7 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
 ;;   (ivy-height 10)
 ;;   (ivy-on-del-error-function nil)
 ;;   (ivy-magic-slash-non-match-action 'ivy-magic-slash-non-match-create)
-;;   (ivy-count-format "��%d/%d��")
+;;   (ivy-count-format "[%d/%d]")
 ;;   (ivy-wrap t)
 ;;   :config
 ;;   (defun counsel-goto-local-home ()
@@ -695,8 +695,8 @@ FACE defaults to inheriting from default and highlight."
 (use-package projectile
   :bind
   ("C-c p" . projectile-command-map)
-  :custom
-  (projectile-completion-system 'ivy)
+;;  :custom
+;;  (projectile-completion-system 'ivy)
   :config
   (projectile-mode 1)
   (when (and *sys/win32*
@@ -821,7 +821,8 @@ FACE defaults to inheriting from default and highlight."
         (("C-c C-o" . dumb-jump-go-other-window)
          ("C-c C-j" . dumb-jump-go)
          ("C-c C-i" . dumb-jump-go-prompt)))
-  :custom (dumb-jump-selector 'ivy))
+  ;; :custom (dumb-jump-selector 'ivy))
+)
 
 (use-package smartparens
   :hook (prog-mode . smartparens-mode)
@@ -1095,4 +1096,3 @@ If all failed, try to complete the common part with `company-complete-common'"
             (find-file-other-window pdf-name))
         (find-file-other-window pdf-name))
       (delete-file (concat (substring pdf-path 0 (string-match "[^\.]*\/?$" pdf-path)) "tex")))))
-
