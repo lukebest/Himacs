@@ -25,7 +25,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'srcery)
+(setq doom-theme 'doom-one)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -33,10 +33,28 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq system-time-locale "C")
 (setq display-line-numbers-type nil)
-(format-time-string "%Y-%m-%d %a")
-(setq inhibit-compacting-font-caches t)
+
+
+;; Here are some additional functions/macros that could help you configure Doom:
+;;
+;; - `load!' for loading external *.el files relative to this one
+;; - `use-package!' for configuring packages
+;; - `after!' for running code after a package has loaded
+;; - `add-load-path!' for adding directories to the `load-path', relative to
+;;   this file. Emacs searches the `load-path' when you load packages with
+;;   `require' or `use-package'.
+;; - `map!' for binding new keys
+;;
+;; To get information about any of these functions/macros, move the cursor over
+;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
+;; This will open documentation for it, including demos of how they are used.
+;;
+;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
+;; they are implemented.
+
+;; A large gc-cons-threshold may cause freezing and stuttering during long-term interactive use.
+;; If you experience freezing, decrease this amount, if you experience stuttering, increase this amount.
 
 (winum-mode t)
 (map! :leader
@@ -52,28 +70,15 @@
       )
 (map! (:leader (:desc "open filetree" :g "0" #'treemacs-select-window)) )
 
-(setq gc-cons-threshold 100000000)
-(setq package-enable-at-startup nil)
-(defvar file-name-handler-alist-original file-name-handler-alist)
-(setq file-name-handler-alist nil)
-(setq site-run-file nil)
-(menu-bar-mode -1)
-(unless (and (display-graphic-p) (eq system-type 'darwin))
-  (push '(menu-bar-lines . 0) default-frame-alist))
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-
-;; garbage collection
-(defvar better-gc-cons-threshold 67108864 ; 64mb
+(defvar better-gc-cons-threshold 134217728 ; 128mb
   "The default value to use for `gc-cons-threshold'.
-
 If you experience freezing, decrease this.  If you experience stuttering, increase this.")
-
 (add-hook 'emacs-startup-hook
           (lambda ()
             (setq gc-cons-threshold better-gc-cons-threshold)
             (setq file-name-handler-alist file-name-handler-alist-original)
             (makunbound 'file-name-handler-alist-original)))
+            
 (add-hook 'emacs-startup-hook
           (lambda ()
             (if (boundp 'after-focus-change-function)
@@ -126,8 +131,25 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
        (not (equal (shell-command-to-string "pip freeze | grep '^PyQt\\|PyQtWebEngine'") "")))
   "Do we have EAF environment setup?")
 
+(when *sys/win32*
+  (after! org-pomodoro
+    :config
+    (add-hook 'org-pomodoro-finished-hook
+              (lambda ()
+                (org-notify "A pomodoro is finished, take a break !!!")
+                ))
+    (add-hook 'org-pomodoro-short-break-finished-hook
+              (lambda ()
+                (org-notify "A short break done, ready a new pomodoro !!!")
+                ))
+    (add-hook 'org-pomodoro-long-break-finished-hook
+              (lambda ()
+                (org-notify "A long break done, ready a new pomodoro !!!")
+                ))
+  ))
+  
+;; Diminish, a feature that removes certain minor modes from mode-line.
 (use-package diminish)
-
 ;; Unbind unneeded keys
 (global-set-key (kbd "C-z") nil)
 (global-set-key (kbd "M-z") nil)
@@ -140,7 +162,11 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
 (global-set-key (kbd "C-=") #'text-scale-increase)
 (global-set-key (kbd "C-+") #'text-scale-increase)
 (global-set-key (kbd "C--") #'text-scale-decrease)
+;; Move up/down paragraph
+(global-set-key (kbd "M-n") #'forward-paragraph)
+(global-set-key (kbd "M-p") #'backward-paragraph)
 
+;; Avy, a nice way to move around text.
 (use-package avy
   :defer t
   :bind
@@ -150,19 +176,20 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
   (avy-timeout-seconds 0.3)
   (avy-style 'pre)
   :custom-face
-  (avy-lead-face ((t (:background "#51afef" :foreground "#870000" :weight bold)))));
+  (avy-lead-face ((t (:background "#51afef" :foreground "#870000" :weight bold)))))
 
-;; (use-package crux
-;;   :bind
-;;   (("C-a" . crux-move-beginning-of-line)
-;;    ("C-x 4 t" . crux-transpose-windows)
-;;    ("C-x K" . crux-kill-other-buffers)
-;;    ("C-k" . crux-smart-kill-line))
-;;   :config
-;;   (crux-with-region-or-buffer indent-region)
-;;   (crux-with-region-or-buffer untabify)
-;;   (crux-with-region-or-point-to-eol kill-ring-save)
-;;   (defalias 'rename-file-and-buffer #'crux-rename-file-and-buffer))
+;; Crux, a Collection of Ridiculously Useful eXtensions for Emacs.
+(use-package crux
+  :bind
+  (("C-a" . crux-move-beginning-of-line)
+   ("C-x 4 t" . crux-transpose-windows)
+   ("C-x K" . crux-kill-other-buffers)
+   ("C-k" . crux-smart-kill-line))
+  :config
+  (crux-with-region-or-buffer indent-region)
+  (crux-with-region-or-buffer untabify)
+  (crux-with-region-or-point-to-eol kill-ring-save)
+  (defalias 'rename-file-and-buffer #'crux-rename-file-and-buffer))
 
 (use-package ivy
   :diminish
@@ -192,7 +219,7 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
   (defun counsel-goto-local-home ()
       "Go to the $HOME of the local machine."
       (interactive)
-      (ivy--cd "~/")))
+    (ivy--cd "~/")))
 
 (use-package color-rg
   :load-path (lambda () (expand-file-name "site-elisp/color-rg" user-emacs-directory))
@@ -303,7 +330,7 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
 (use-package undo-tree
   :defer t
   :diminish undo-tree-mode
-  :init (global-undo-tree-mode)
+  ;; :init (global-undo-tree-mode)
   :custom
   (undo-tree-visualizer-diff t)
   (undo-tree-visualizer-timestamps t))
@@ -494,6 +521,9 @@ The original function deletes trailing whitespace of the current line."
 (add-to-list 'auto-mode-alist '("\\.in\\'" . text-mode))
 (add-to-list 'auto-mode-alist '("\\.out\\'" . text-mode))
 (add-to-list 'auto-mode-alist '("\\.args\\'" . text-mode))
+(add-to-list 'auto-mode-alist '("\\.bb\\'" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("\\.bbclass\\'" . shell-script-mode))
+(add-to-list 'auto-mode-alist '("\\.Rmd\\'" . markdown-mode))
 
 ;; Resizes the window width based on the input
 (defun resize-window-width (w)
@@ -580,6 +610,7 @@ BEGIN and END are regexps which define the line range to use."
           (setq r (1+ (line-number-at-pos (match-end 0)))))
         (format "%s-%s" (+ l 1) (- r 1)))))) ;; Exclude wrapper
 
+;; MiniBuffer Functions
 (defun abort-minibuffer-using-mouse ()
   "Abort the minibuffer when using the mouse."
   (when (and (>= (recursion-depth) 1) (active-minibuffer-window))
@@ -590,6 +621,7 @@ BEGIN and END are regexps which define the line range to use."
 ;; keep the point out of the minibuffer
 (setq-default minibuffer-prompt-properties '(read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt))
 
+;; Display Line Overlay
 (defun display-line-overlay+ (pos str &optional face)
   "Display line at POS as STR with FACE.
 
@@ -603,6 +635,7 @@ FACE defaults to inheriting from default and highlight."
                  (or face '(:background null :inherit highlight)))
     ol))
 
+;; Read Lines From File
 (defun read-lines (file-path)
   "Return a list of lines of a file at FILE-PATH."
   (with-temp-buffer (insert-file-contents file-path)
@@ -613,11 +646,24 @@ FACE defaults to inheriting from default and highlight."
   (interactive)
   (message (kill-new (if (buffer-file-name) (buffer-file-name) (buffer-name)))))
 
+;; UI Enhancements
+(use-package doom-modeline
+  :custom
+  ;; Don't compact font caches during GC. Windows Laggy Issue
+  (inhibit-compacting-font-caches t)
+  (doom-modeline-minor-modes t)
+  (doom-modeline-icon t)
+  (doom-modeline-major-mode-color-icon t)
+  (doom-modeline-height 15)
+  :config
+  (doom-modeline-mode))
+
 (use-package page-break-lines
   :diminish
   :init (global-page-break-lines-mode))
 
 
+;; Configurations to smooth scrolling.
 ;; Vertical Scroll
 (setq scroll-step 1)
 (setq scroll-margin 1)
@@ -632,64 +678,41 @@ FACE defaults to inheriting from default and highlight."
 (setq hscroll-step 1)
 (setq hscroll-margin 1)
 
+;; Prettify Symbols
 (global-prettify-symbols-mode 1)
 (defun add-pretty-lambda ()
   "Make some word or string show as pretty Unicode symbols.  See https://unicodelookup.com for more."
   (setq prettify-symbols-alist
-        '(
-          ("lambda" . 955)
+        '(("lambda" . 955)
           ("delta" . 120517)
           ("epsilon" . 120518)
           ("->" . 8594)
           ("<=" . 8804)
-          (">=" . 8805)
-          )))
+          (">=" . 8805))))
 (add-hook 'prog-mode-hook 'add-pretty-lambda)
 (add-hook 'org-mode-hook 'add-pretty-lambda)
 
-(setq-default frame-title-format '("HiEMACS - " user-login-name "@" system-name " - %b"))
+;; Title Bar
+(setq-default frame-title-format '("HiMACS - " user-login-name "@" system-name " - %b"))
+
+;; Simplify Yes/No Prompts
 (fset 'yes-or-no-p 'y-or-n-p)
-(setq inhibit-startup-screen t)
+(setq use-dialog-box nil)
+
+;; Disable Splash Screen
+(setq inhibit-startup-screen nil)
 (setq initial-major-mode 'text-mode)
-(setq initial-scratch-message "Present Day, Present Time...\n")
+;; https://www.youtube.com/watch?v=NfjsLmya1PI
+(setq initial-scratch-message "Better to run then curse the road...\n")
 
-;; Hook line numbers to only when files are opened, also use linum-mode for emacs-version< 26
-(if (version< emacs-version "26")
-    (global-linum-mode)
-  (add-hook 'text-mode-hook #'display-line-numbers-mode)
-  (add-hook 'prog-mode-hook #'display-line-numbers-mode))
-;; Display column numbers in modeline
-(column-number-mode 1)
+;; Modeline Time and Battery
 (display-time-mode 1)
-
-;; Here are some additional functions/macros that could help you configure Doom:
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
-
-(use-package magit
-  :if (executable-find "git")
-  :bind
-  (("C-x g" . magit-status)
-   (:map magit-status-mode-map
-         ("M-RET" . magit-diff-visit-file-other-window)))
-  :config
-  (defun magit-log-follow-current-file ()
-    "A wrapper around `magit-log-buffer-file' with `--follow' argument."
-    (interactive)
-    (magit-log-buffer-file t)))
+(setq display-time-24hr-format t)
+(setq display-time-day-and-date t)
+(display-battery-mode 0)
+(tool-bar-mode 0)
+(menu-bar-mode 1)
+(scroll-bar-mode 0)
 
 (use-package projectile
   :bind
@@ -750,12 +773,7 @@ FACE defaults to inheriting from default and highlight."
    ("C-x t B"   . treemacs-bookmark)
    ("C-x t C-t" . treemacs-find-file)
    ("C-x t M-t" . treemacs-find-tag))
-  (:map treemacs-mode-map ("C-p" . treemacs-previous-line))
-  )
-
-(use-package treemacs-magit
-  :defer t
-  :after (treemacs magit))
+  (:map treemacs-mode-map ("C-p" . treemacs-previous-line)))
 
 (use-package treemacs-projectile
   :defer t
@@ -782,37 +800,6 @@ FACE defaults to inheriting from default and highlight."
       (when (and (eq old-point (point))
                  (eq old-tick (buffer-chars-modified-tick)))
         (ignore-errors (yas-next-field))))))
-
-;; (use-package flycheck
-;;   :defer t
-;;   :diminish
-;;   :hook ((prog-mode markdown-mode) . flycheck-mode)
-;;   :custom
-;;   (flycheck-global-modes
-;;    '(not text-mode outline-mode fundamental-mode org-mode
-;;          diff-mode shell-mode eshell-mode term-mode))
-;;   (flycheck-emacs-lisp-load-path 'inherit)
-;;   (flycheck-indication-mode 'right-fringe)
-;;   :init
-;;   (use-package flycheck-grammarly :defer t)
-;;   (if (display-graphic-p)
-;;       (use-package flycheck-posframe
-;;         :custom-face (flycheck-posframe-border-face ((t (:inherit default))))
-;;         :hook (flycheck-mode . flycheck-posframe-mode)
-;;         :custom
-;;         (flycheck-posframe-border-width 1)
-;;         (flycheck-posframe-inhibit-functions
-;;          '((lambda (&rest _) (bound-and-true-p company-backend)))))
-;;     (use-package flycheck-pos-tip
-;;       :defines flycheck-pos-tip-timeout
-;;       :hook (flycheck-mode . flycheck-pos-tip-mode)
-;;       :custom (flycheck-pos-tip-timeout 30)))
-;;   :config
-;;   (when (fboundp 'define-fringe-bitmap)
-;;     (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
-;;       [16 48 112 240 112 48 16] nil nil 'center))
-;;   (flycheck-add-mode 'javascript-eslint 'js-mode)
-;;   (flycheck-add-mode 'typescript-tslint 'rjsx-mode))
 
 (use-package dumb-jump
   :bind
@@ -844,6 +831,8 @@ FACE defaults to inheriting from default and highlight."
   (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
   (sp-local-pair 'org-mode "[" nil :actions nil))
 
+
+;; Match Parenthesis
 ;; Show matching parenthesis
 (show-paren-mode 1)
 ;; we will call `blink-matching-open` ourselves...
@@ -884,6 +873,11 @@ FACE defaults to inheriting from default and highlight."
                                  (window-start) msg))))))
           (blink-matching-open))))))
 
+(use-package evil-matchit)
+(global-evil-matchit-mode 1)
+
+;; Indentation
+
 (use-package highlight-indent-guides
   :if (display-graphic-p)
   :diminish
@@ -896,6 +890,7 @@ FACE defaults to inheriting from default and highlight."
   (highlight-indent-guides-delay 0)
   (highlight-indent-guides-auto-character-face-perc 7))
 
+;; Indentation Configuration
 (setq-default indent-tabs-mode nil)
 (setq-default indent-line-function 'insert-tab)
 (setq-default tab-width 4)
@@ -914,8 +909,10 @@ FACE defaults to inheriting from default and highlight."
         ((eq electric-indent-mode nil) (electric-indent-mode 1))))
 (add-hook 'post-command-hook #'smart-electric-indent-mode)
 
-;; (use-package format-all
-;;   :bind ("C-c C-f" . format-all-buffer))
+
+(use-package iedit
+  :bind ("C-z ," . iedit-mode)
+  :diminish)
 
 (use-package awesome-pair
   :load-path (lambda () (expand-file-name "site-elisp/awesome-pair" user-emacs-directory))
@@ -1043,11 +1040,11 @@ If all failed, try to complete the common part with `company-complete-common'"
 (use-package org
   :ensure nil
   :defer t
-  :bind
-  ("C-c l" . org-store-link)
-  ("C-c a" . org-agenda)
-  ("C-c c" . org-capture)
-  (:map org-mode-map ("C-c C-p" . org-export-as-pdf-and-open))
+  :bind (("C-c l" . org-store-link)
+         ("C-c a" . org-agenda)
+         ("C-c c" . org-capture)
+         (:map org-mode-map (("C-c C-p" . eaf-org-export-to-pdf-and-open)
+                             ("C-c ;" . nil))))
   :custom
   (org-log-done 'time)
   (calendar-latitude 43.65107) ;; Prerequisite: set it to your location, currently default: Toronto, Canada
@@ -1064,6 +1061,8 @@ If all failed, try to complete the common part with `company-complete-common'"
   (org-latex-pdf-process
    '("pdflatex -shelnl-escape -interaction nonstopmode -output-directory %o %f"
      "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  :custom-face
+  (org-agenda-current-time ((t (:foreground "spring green"))))
   :config
   (add-to-list 'org-latex-packages-alist '("" "listings"))
   (unless (version< org-version "9.2")
@@ -1080,190 +1079,7 @@ If all failed, try to complete the common part with `company-complete-common'"
   (defun org-table-insert-vertical-hline ()
     "Insert a #+attr_latex to the current buffer, default the align to |c|c|c|, adjust if necessary."
     (interactive)
-    (insert "#+attr_latex: :align |c|c|c|"))
+    (insert "#+attr_latex: :align |c|c|c|")))
 
-  (defun org-export-as-pdf-and-open ()
-    "Run `org-latex-export-to-pdf', delete the tex file and open pdf in a new buffer."
-    (interactive)
-    (save-buffer)
-    (let* ((pdf-path (org-latex-export-to-pdf))
-           (pdf-name (file-name-nondirectory pdf-path)))
-      (if (try-completion pdf-name (mapcar #'buffer-name (buffer-list)))
-          (progn
-            (kill-matching-buffers (concat "^" pdf-name) t t)
-            (find-file-other-window pdf-name))
-        (find-file-other-window pdf-name))
-      (delete-file (concat (substring pdf-path 0 (string-match "[^\.]*\/?$" pdf-path)) "tex")))))
-
-;; modeline
-(setq doom-modeline-height 25)
-
-;; How wide the mode-line bar should be. It's only respected in GUI.
-(setq doom-modeline-bar-width 3)
-
-;; The limit of the window width.
-;; If `window-width' is smaller than the limit, some information won't be displayed.
-(setq doom-modeline-window-width-limit fill-column)
-
-;; How to detect the project root.
-;; The default priority of detection is `ffip' > `projectile' > `project'.
-;; nil means to use `default-directory'.
-;; The project management packages have some issues on detecting project root.
-;; e.g. `projectile' doesn't handle symlink folders well, while `project' is unable
-;; to hanle sub-projects.
-;; You can specify one if you encounter the issue.
-(setq doom-modeline-project-detection 'project)
-
-;; Determines the style used by `doom-modeline-buffer-file-name'.
-;;
-;; Given ~/Projects/FOSS/emacs/lisp/comint.el
-;;   auto => emacs/lisp/comint.el (in a project) or comint.el
-;;   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
-;;   truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
-;;   truncate-with-project => emacs/l/comint.el
-;;   truncate-except-project => ~/P/F/emacs/l/comint.el
-;;   truncate-upto-root => ~/P/F/e/lisp/comint.el
-;;   truncate-all => ~/P/F/e/l/comint.el
-;;   truncate-nil => ~/Projects/FOSS/emacs/lisp/comint.el
-;;   relative-from-project => emacs/lisp/comint.el
-;;   relative-to-project => lisp/comint.el
-;;   file-name => comint.el
-;;   buffer-name => comint.el<2> (uniquify buffer name)
-;;
-;; If you are experiencing the laggy issue, especially while editing remote files
-;; with tramp, please try `file-name' style.
-;; Please refer to https://github.com/bbatsov/projectile/issues/657.
-(setq doom-modeline-buffer-file-name-style 'auto)
-
-;; Whether display icons in the mode-line.
-;; While using the server mode in GUI, should set the value explicitly.
-(setq doom-modeline-icon (display-graphic-p))
-
-;; Whether display the icon for `major-mode'. It respects `doom-modeline-icon'.
-(setq doom-modeline-major-mode-icon t)
-
-;; Whether display the colorful icon for `major-mode'.
-;; It respects `all-the-icons-color-icons'.
-(setq doom-modeline-major-mode-color-icon t)
-
-;; Whether display the icon for the buffer state. It respects `doom-modeline-icon'.
-(setq doom-modeline-buffer-state-icon t)
-
-;; Whether display the modification icon for the buffer.
-;; It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
-(setq doom-modeline-buffer-modification-icon t)
-
-;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.
-(setq doom-modeline-unicode-fallback nil)
-
-;; Whether display the minor modes in the mode-line.
-(setq doom-modeline-minor-modes nil)
-
-;; If non-nil, a word count will be added to the selection-info modeline segment.
-(setq doom-modeline-enable-word-count nil)
-
-;; Major modes in which to display word count continuously.
-;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
-;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
-;; remove the modes from `doom-modeline-continuous-word-count-modes'.
-(setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
-
-;; Whether display the buffer encoding.
-(setq doom-modeline-buffer-encoding t)
-
-;; Whether display the indentation information.
-(setq doom-modeline-indent-info nil)
-
-;; If non-nil, only display one number for checker information if applicable.
-(setq doom-modeline-checker-simple-format t)
-
-;; The maximum number displayed for notifications.
-(setq doom-modeline-number-limit 99)
-
-;; The maximum displayed length of the branch name of version control.
-(setq doom-modeline-vcs-max-length 12)
-
-;; Whether display the workspace name. Non-nil to display in the mode-line.
-(setq doom-modeline-workspace-name t)
-
-;; Whether display the perspective name. Non-nil to display in the mode-line.
-(setq doom-modeline-persp-name t)
-
-;; If non nil the default perspective name is displayed in the mode-line.
-(setq doom-modeline-display-default-persp-name nil)
-
-;; If non nil the perspective name is displayed alongside a folder icon.
-(setq doom-modeline-persp-icon t)
-
-;; Whether display the `lsp' state. Non-nil to display in the mode-line.
-(setq doom-modeline-lsp t)
-
-;; Whether display the GitHub notifications. It requires `ghub' package.
-(setq doom-modeline-github nil)
-
-;; The interval of checking GitHub.
-(setq doom-modeline-github-interval (* 30 60))
-
-;; Whether display the modal state icon.
-;; Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc.
-(setq doom-modeline-modal-icon t)
-
-;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
-(setq doom-modeline-mu4e nil)
-
-;; Whether display the gnus notifications.
-(setq doom-modeline-gnus t)
-
-;; Wheter gnus should automatically be updated and how often (set to 0 or smaller than 0 to disable)
-(setq doom-modeline-gnus-timer 2)
-
-;; Wheter groups should be excludede when gnus automatically being updated.
-(setq doom-modeline-gnus-excluded-groups '("dummy.group"))
-
-;; Whether display the IRC notifications. It requires `circe' or `erc' package.
-(setq doom-modeline-irc t)
-
-;; Function to stylize the irc buffer names.
-(setq doom-modeline-irc-stylize 'identity)
-
-;; Whether display the environment version.
-(setq doom-modeline-env-version t)
-;; Or for individual languages
-(setq doom-modeline-env-enable-python t)
-(setq doom-modeline-env-enable-ruby t)
-(setq doom-modeline-env-enable-perl t)
-(setq doom-modeline-env-enable-go t)
-(setq doom-modeline-env-enable-elixir t)
-(setq doom-modeline-env-enable-rust t)
-
-;; Change the executables to use for the language version string
-(setq doom-modeline-env-python-executable "python") ; or `python-shell-interpreter'
-(setq doom-modeline-env-ruby-executable "ruby")
-(setq doom-modeline-env-perl-executable "perl")
-(setq doom-modeline-env-go-executable "go")
-(setq doom-modeline-env-elixir-executable "iex")
-(setq doom-modeline-env-rust-executable "rustc")
-
-;; What to display as the version while a new one is being loaded
-(setq doom-modeline-env-load-string "...")
-
-;; Hooks that run before/after the modeline version string is updated
-(setq doom-modeline-before-update-env-hook nil)
-(setq doom-modeline-after-update-env-hook nil)
-
-(when *sys/win32*
-  (after! org-pomodoro
-    :config
-    (add-hook 'org-pomodoro-finished-hook
-              (lambda ()
-                (org-notify "A pomodoro is finished, take a break !!!")
-                ))
-    (add-hook 'org-pomodoro-short-break-finished-hook
-              (lambda ()
-                (org-notify "A short break done, ready a new pomodoro !!!")
-                ))
-    (add-hook 'org-pomodoro-long-break-finished-hook
-              (lambda ()
-                (org-notify "A long break done, ready a new pomodoro !!!")
-                ))
-  ))
+(use-package toc-org
+  :hook (org-mode . toc-org-mode))
