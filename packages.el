@@ -14,7 +14,8 @@
 (package! color-rg
           :recipe (:host github :repo "manateelazycat/color-rg"))
 (package! find-file-in-project)
-(package! snails)
+(package! snails
+          :recipe (:host github :repo "manateelazycat/snails"))
 (package! disk-usage)
 (package! winner)
 (package! which-key)
