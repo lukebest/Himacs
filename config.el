@@ -34,7 +34,7 @@
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type nil)
-
+(add-hook 'window-setup-hook #'toggle-frame-maximized)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -78,7 +78,7 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
             (setq gc-cons-threshold better-gc-cons-threshold)
             (setq file-name-handler-alist file-name-handler-alist-original)
             (makunbound 'file-name-handler-alist-original)))
-            
+
 (add-hook 'emacs-startup-hook
           (lambda ()
             (if (boundp 'after-focus-change-function)
@@ -147,7 +147,7 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
                 (org-notify "A long break done, ready a new pomodoro !!!")
                 ))
   ))
-  
+
 ;; Diminish, a feature that removes certain minor modes from mode-line.
 (use-package diminish)
 ;; Unbind unneeded keys
@@ -1083,3 +1083,16 @@ If all failed, try to complete the common part with `company-complete-common'"
 
 (use-package toc-org
   :hook (org-mode . toc-org-mode))
+
+(use-package rime
+	:custom
+	(setq rime-translate-keybindings
+		    '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
+	(setq rime-show-candidate posframe)
+	(setq rime-disable-predicates
+		    '(rime-predicate-evil-mode-p
+			    rime-predicate-after-alphabet-char-p
+				  rime-predicate-prog-in-code-p))
+	(setq mode-line-mule-info '((:eval (rime-lighter))))
+	(default-input-method "rime")
+  )
