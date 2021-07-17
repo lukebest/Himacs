@@ -47,6 +47,15 @@
           :recipe (:host github :repo "marcinkoziej/org-pomodoro"))
 (package! rime
           :recipe (:host github :repo "DogLooksGood/emacs-rime"))
+(package! citre
+          :recipe (:host github :repo "universal-ctags/citre"))
+(package! desktop)
+(unpin! org-roam)
+(package! org-roam
+          :recipe (:host github :repo "org-roam/org-roam" :branch "v2"))
+(package! org-roam-server
+          :recipe (:host github :repo "org-roam/org-roam-server"))
+
 ;; To install a package directly from a remote git repo, you must specify a
 ;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
 ;; https://github.com/raxod502/straight.el#the-recipe-format

@@ -34,7 +34,6 @@
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type nil)
-(add-hook 'window-setup-hook #'toggle-frame-maximized)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -1084,11 +1083,51 @@ If all failed, try to complete the common part with `company-complete-common'"
 (use-package toc-org
   :hook (org-mode . toc-org-mode))
 
+;;; roam v2 configuration
+(setq org-roam-directory "~/org/")
+(use-package! org-roam
+  :after org
+  :commands
+  (org-roam-buffer
+   org-roam-setup
+   org-roam-capture
+   org-roam-node-find)
+  :init
+  (map!
+        :leader
+        :prefix ("m" . "org-roam")
+        "f" #'org-roam-node-find
+        "i" #'org-roam-node-insert
+        "b" #'org-roam-buffer-toggle
+        "t" #'org-roam-tag-add
+        "T" #'org-roam-tag-remove)
+  :config
+  ;;(setq org-roam-mode-sections
+  ;;      (list #'org-roam-backlinks-insert-section
+  ;;            #'org-roam-reflinks-insert-section
+  ;;            #'org-roam-unlinked-references-insert-section))
+  (org-roam-setup))
+
+;; (use-package org-roam-server
+;;   :ensure t
+;;   :config
+;;   (setq org-roam-server-host "127.0.0.1"
+;;         org-roam-server-port 8080
+;;         org-roam-server-authenticate nil
+;;         org-roam-server-export-inline-images t
+;;         org-roam-server-serve-files nil
+;;         org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+;;         org-roam-server-network-poll t
+;;         org-roam-server-network-arrows nil
+;;         org-roam-server-network-label-truncate t
+;;         org-roam-server-network-label-truncate-length 60
+;;         org-roam-server-network-label-wrap-length 20))
+
 (use-package rime
 	:custom
 	(setq rime-translate-keybindings
 		    '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
-	(setq rime-show-candidate posframe)
+	(setq rime-show-candidate 'posframe)
 	(setq rime-disable-predicates
 		    '(rime-predicate-evil-mode-p
 			    rime-predicate-after-alphabet-char-p
@@ -1096,3 +1135,23 @@ If all failed, try to complete the common part with `company-complete-common'"
 	(setq mode-line-mule-info '((:eval (rime-lighter))))
 	(default-input-method "rime")
   )
+
+(use-package citre
+  :defer t
+  :init
+  ;; This is needed in `:init' block for lazy load to work.
+  (require 'citre-config)
+  ;; Bind your frequently used commands.
+  (global-set-key (kbd "C-M-]") 'citre-jump)
+  (global-set-key (kbd "C-M-[") 'citre-jump-back)
+  (global-set-key (kbd "C-M-p") 'citre-ace-peek)
+  (global-set-key (kbd "C-M-i") 'citre-completion-at-point)
+  :config
+  (setq
+   ;; Set this if readtags is not in your path.
+   ;;
+   ;; citre-readtags-program "/path/to/readtags"
+   ;;
+   ;; Set this if you use project management plugin like projectile.  It's
+   ;; used for things like displaying paths relatively, see its docstring.
+   citre-project-root-function #'projectile-project-root))
