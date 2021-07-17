@@ -52,7 +52,7 @@
 (package! desktop)
 (unpin! org-roam)
 (package! org-roam
-          :recipe (:host github :repo "org-roam/org-roam" :branch "v2"))
+          :recipe (:host github :repo "org-roam/org-roam"))
 (package! org-roam-server
           :recipe (:host github :repo "org-roam/org-roam-server"))
 
