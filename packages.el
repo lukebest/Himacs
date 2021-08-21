@@ -14,8 +14,6 @@
 (package! color-rg
           :recipe (:host github :repo "manateelazycat/color-rg"))
 (package! find-file-in-project)
-(package! snails
-          :recipe (:host github :repo "manateelazycat/snails"))
 (package! disk-usage)
 (package! winner)
 (package! which-key)
@@ -36,25 +34,18 @@
 (package! conf-mode)
 (package! delete-block
           :recipe (:host github :repo "manateelazycat/delete-block"))
-(package! company-box)
 
-(package! winum)
 (package! monokai-theme)
 (package! srcery-theme)
+
 (package! evil-matchit
           :recipe (:host github :repo "redguardtoo/evil-matchit"))
-(package! org-pomodoro
-          :recipe (:host github :repo "marcinkoziej/org-pomodoro"))
 (package! rime
           :recipe (:host github :repo "DogLooksGood/emacs-rime"))
 (package! citre
           :recipe (:host github :repo "universal-ctags/citre"))
-(package! desktop)
-(unpin! org-roam)
-(package! org-roam
-          :recipe (:host github :repo "org-roam/org-roam" :branch "v2"))
-(package! org-roam-server
-          :recipe (:host github :repo "org-roam/org-roam-server"))
+(package! snails
+          :recipe (:host github :repo "manateelazycat/snails"))
 
 ;; To install a package directly from a remote git repo, you must specify a
 ;; `:recipe'. You'll find documentation on what `:recipe' accepts here:

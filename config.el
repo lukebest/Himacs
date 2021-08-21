@@ -69,32 +69,32 @@
       )
 (map! (:leader (:desc "open filetree" :g "0" #'treemacs-select-window)) )
 
-(defvar better-gc-cons-threshold 134217728 ; 128mb
-  "The default value to use for `gc-cons-threshold'.
-If you experience freezing, decrease this.  If you experience stuttering, increase this.")
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (setq gc-cons-threshold better-gc-cons-threshold)
-            (setq file-name-handler-alist file-name-handler-alist-original)
-            (makunbound 'file-name-handler-alist-original)))
+;; (defvar better-gc-cons-threshold 134217728 ; 128mb
+;;   "The default value to use for `gc-cons-threshold'.
+;; If you experience freezing, decrease this.  If you experience stuttering, increase this.")
+;; (add-hook 'emacs-startup-hook
+;;           (lambda ()
+;;             (setq gc-cons-threshold better-gc-cons-threshold)
+;;             (setq file-name-handler-alist file-name-handler-alist-original)
+;;             (makunbound 'file-name-handler-alist-original)))
 
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (if (boundp 'after-focus-change-function)
-                (add-function :after after-focus-change-function
-                              (lambda ()
-                                (unless (frame-focus-state)
-                                  (garbage-collect))))
-              (add-hook 'after-focus-change-function 'garbage-collect))
-            (defun gc-minibuffer-setup-hook ()
-              (setq gc-cons-threshold (* better-gc-cons-threshold 2)))
+;; (add-hook 'emacs-startup-hook
+;;           (lambda ()
+;;             (if (boundp 'after-focus-change-function)
+;;                 (add-function :after after-focus-change-function
+;;                               (lambda ()
+;;                                 (unless (frame-focus-state)
+;;                                   (garbage-collect))))
+;;               (add-hook 'after-focus-change-function 'garbage-collect))
+;;             (defun gc-minibuffer-setup-hook ()
+;;               (setq gc-cons-threshold (* better-gc-cons-threshold 2)))
 
-            (defun gc-minibuffer-exit-hook ()
-              (garbage-collect)
-              (setq gc-cons-threshold better-gc-cons-threshold))
+;;             (defun gc-minibuffer-exit-hook ()
+;;               (garbage-collect)
+;;               (setq gc-cons-threshold better-gc-cons-threshold))
 
-            (add-hook 'minibuffer-setup-hook #'gc-minibuffer-setup-hook)
-            (add-hook 'minibuffer-exit-hook #'gc-minibuffer-exit-hook)))
+;;             (add-hook 'minibuffer-setup-hook #'gc-minibuffer-setup-hook)
+;;             (add-hook 'minibuffer-exit-hook #'gc-minibuffer-exit-hook)))
 
 (defconst *sys/win32*
   (eq system-type 'windows-nt)
@@ -145,7 +145,7 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
               (lambda ()
                 (org-notify "A long break done, ready a new pomodoro !!!")
                 ))
-  ))
+    ))
 
 ;; Diminish, a feature that removes certain minor modes from mode-line.
 (use-package diminish)
@@ -216,8 +216,8 @@ If you experience freezing, decrease this.  If you experience stuttering, increa
   (ivy-wrap t)
   :config
   (defun counsel-goto-local-home ()
-      "Go to the $HOME of the local machine."
-      (interactive)
+    "Go to the $HOME of the local machine."
+    (interactive)
     (ivy--cd "~/")))
 
 (use-package color-rg
@@ -472,7 +472,7 @@ The original function deletes trailing whitespace of the current line."
                      "url"
                      "COMMIT_EDITMSG\\'")))
 
-;; When buffer is closed, saves the cursor location
+When buffer is closed, saves the cursor location
 (save-place-mode 1)
 
 ;; Set history-length longer
@@ -844,33 +844,33 @@ FACE defaults to inheriting from default and highlight."
   (advice-add
    #'show-paren-function
    :after
-    (defun show-paren--off-screen+ (&rest _args)
-      "Display matching line for off-screen paren."
-      (when (overlayp ov)
-        (delete-overlay ov))
-      ;; check if it's appropriate to show match info,
-      ;; see `blink-paren-post-self-insert-function'
-      (when (and (overlay-buffer show-paren--overlay)
-                 (not (or cursor-in-echo-area
-                          executing-kbd-macro
-                          noninteractive
-                          (minibufferp)
-                          this-command))
-                 (and (not (bobp))
-                      (memq (char-syntax (char-before)) '(?\) ?\$)))
-                 (= 1 (logand 1 (- (point)
-                                   (save-excursion
-                                     (forward-char -1)
-                                     (skip-syntax-backward "/\\")
-                                     (point))))))
-        ;; rebind `minibuffer-message' called by
-        ;; `blink-matching-open' to handle the overlay display
-        (cl-letf (((symbol-function #'minibuffer-message)
-                   (lambda (msg &rest args)
-                     (let ((msg (apply #'format-message msg args)))
-                       (setq ov (display-line-overlay+
-                                 (window-start) msg))))))
-          (blink-matching-open))))))
+   (defun show-paren--off-screen+ (&rest _args)
+     "Display matching line for off-screen paren."
+     (when (overlayp ov)
+       (delete-overlay ov))
+     ;; check if it's appropriate to show match info,
+     ;; see `blink-paren-post-self-insert-function'
+     (when (and (overlay-buffer show-paren--overlay)
+                (not (or cursor-in-echo-area
+                         executing-kbd-macro
+                         noninteractive
+                         (minibufferp)
+                         this-command))
+                (and (not (bobp))
+                     (memq (char-syntax (char-before)) '(?\) ?\$)))
+                (= 1 (logand 1 (- (point)
+                                  (save-excursion
+                                    (forward-char -1)
+                                    (skip-syntax-backward "/\\")
+                                    (point))))))
+       ;; rebind `minibuffer-message' called by
+       ;; `blink-matching-open' to handle the overlay display
+       (cl-letf (((symbol-function #'minibuffer-message)
+                  (lambda (msg &rest args)
+                    (let ((msg (apply #'format-message msg args)))
+                      (setq ov (display-line-overlay+
+                                (window-start) msg))))))
+         (blink-matching-open))))))
 
 (use-package evil-matchit)
 (global-evil-matchit-mode 1)
@@ -1083,45 +1083,8 @@ If all failed, try to complete the common part with `company-complete-common'"
 (use-package toc-org
   :hook (org-mode . toc-org-mode))
 
-;;; roam v2 configuration
+;; roam v2 configuration
 (setq org-roam-directory "~/org/")
-(use-package! org-roam
-  :after org
-  :commands
-  (org-roam-buffer
-   org-roam-setup
-   org-roam-capture
-   org-roam-node-find)
-  :init
-  (map!
-        :leader
-        :prefix ("m" . "org-roam")
-        "f" #'org-roam-node-find
-        "i" #'org-roam-node-insert
-        "b" #'org-roam-buffer-toggle
-        "t" #'org-roam-tag-add
-        "T" #'org-roam-tag-remove)
-  :config
-  ;;(setq org-roam-mode-sections
-  ;;      (list #'org-roam-backlinks-insert-section
-  ;;            #'org-roam-reflinks-insert-section
-  ;;            #'org-roam-unlinked-references-insert-section))
-  (org-roam-setup))
-
-;; (use-package org-roam-server
-;;   :ensure t
-;;   :config
-;;   (setq org-roam-server-host "127.0.0.1"
-;;         org-roam-server-port 8080
-;;         org-roam-server-authenticate nil
-;;         org-roam-server-export-inline-images t
-;;         org-roam-server-serve-files nil
-;;         org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
-;;         org-roam-server-network-poll t
-;;         org-roam-server-network-arrows nil
-;;         org-roam-server-network-label-truncate t
-;;         org-roam-server-network-label-truncate-length 60
-;;         org-roam-server-network-label-wrap-length 20))
 
 (use-package rime
 	:custom
@@ -1155,3 +1118,55 @@ If all failed, try to complete the common part with `company-complete-common'"
    ;; Set this if you use project management plugin like projectile.  It's
    ;; used for things like displaying paths relatively, see its docstring.
    citre-project-root-function #'projectile-project-root))
+
+(setq org-taskjuggler-default-reports
+      '("textreport report \"Plan\" {
+  formats html
+  header '== %title =='
+  center -8<-
+    [#Plan Plan] | [#Resource_Allocation Resource Allocation]
+    ----
+    === Plan ===
+    <[report id=\"plan\"]>
+    ----
+    === Resource Allocation ===
+    <[report id=\"resourceGraph\"]>
+  ->8-
+}
+# A traditional Gantt chart with a project overview.
+taskreport plan \"\" {
+  headline \"Project Plan\"
+  columns bsi, name {width 350}, start, end, effort, chart {scale week width 800}
+  loadunit shortauto
+  hideresource 1
+}
+# A graph showing resource allocation. It identifies whether each
+# resource is under- or over-allocated for.
+resourcereport resourceGraph \"\" {
+  headline \"Resource Allocation Graph\"
+  columns no, name, effort, annualleave, complete, weekly {width 700}
+  loadunit shortauto
+  hidetask ~(isleaf() & isleaf_())
+  sorttasks plan.start.up
+}")
+      )
+
+(setq org-taskjuggler-default-global-properties
+      "
+shift s40 \"Part time shift\" {
+  workinghours wed, thu, fri off
+}
+leaves holiday \"National Day\" 2021-10-01 +5d,
+       holiday \"Dragon Boat Festival\" 2021-06-12 +3d,
+       holiday \"Mid-Autumn Festival\" 2021-09-19 +2d
+")
+
+(setenv "LC_ALL" "zh_CN.UTF-8")
+(setenv "LANG" "zh_CN.UTF-8")
+(setenv "LANGUAGE" "zh_CN.UTF-8")
+(setenv "LC_COLLATE" "zh_CN.UTF-8")
+(setenv "LC_CTYPE" "zh_CN.UTF-8")
+(setenv "LC_MESSAGES" "zh_CN.UTF-8")
+(setenv "LC_MONETARY" "zh_CN.UTF-8")
+(setenv "LC_NUMERIC" "zh_CN.UTF-8")
+(setenv "LC_TIME" "zh_CN.UTF-8")
