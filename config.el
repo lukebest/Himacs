@@ -472,7 +472,7 @@ The original function deletes trailing whitespace of the current line."
                      "url"
                      "COMMIT_EDITMSG\\'")))
 
-When buffer is closed, saves the cursor location
+;; When buffer is closed, saves the cursor location
 (save-place-mode 1)
 
 ;; Set history-length longer
