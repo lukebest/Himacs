@@ -190,35 +190,35 @@
   (crux-with-region-or-point-to-eol kill-ring-save)
   (defalias 'rename-file-and-buffer #'crux-rename-file-and-buffer))
 
-(use-package ivy
-  :diminish
-  :init
-  (use-package amx :defer t)
-  (use-package counsel :diminish :config (counsel-mode 1))
-  (use-package swiper :defer t)
-  (ivy-mode 1)
-  :bind
-  (("C-s" . swiper-isearch)
-   ("C-z s" . counsel-rg)
-   ("C-z b" . counsel-buffer-or-recentf)
-   ("C-z C-b" . counsel-ibuffer)
-   (:map ivy-minibuffer-map
-         ("C-r" . ivy-previous-line-or-history)
-         ("M-RET" . ivy-immediate-done))
-   (:map counsel-find-file-map
-         ("C-~" . counsel-goto-local-home)))
-  :custom
-  (ivy-use-virtual-buffers t)
-  (ivy-height 10)
-  (ivy-on-del-error-function nil)
-  (ivy-magic-slash-non-match-action 'ivy-magic-slash-non-match-create)
-  (ivy-count-format "[%d/%d]")
-  (ivy-wrap t)
-  :config
-  (defun counsel-goto-local-home ()
-    "Go to the $HOME of the local machine."
-    (interactive)
-    (ivy--cd "~/")))
+;; (use-package ivy
+;;   :diminish
+;;   :init
+;;   (use-package amx :defer t)
+;;   (use-package counsel :diminish :config (counsel-mode 1))
+;;   (use-package swiper :defer t)
+;;   (ivy-mode 1)
+;;   :bind
+;;   (("C-s" . swiper-isearch)
+;;    ("C-z s" . counsel-rg)
+;;    ("C-z b" . counsel-buffer-or-recentf)
+;;    ("C-z C-b" . counsel-ibuffer)
+;;    (:map ivy-minibuffer-map
+;;          ("C-r" . ivy-previous-line-or-history)
+;;          ("M-RET" . ivy-immediate-done))
+;;    (:map counsel-find-file-map
+;;          ("C-~" . counsel-goto-local-home)))
+;;   :custom
+;;   (ivy-use-virtual-buffers t)
+;;   (ivy-height 10)
+;;   (ivy-on-del-error-function nil)
+;;   (ivy-magic-slash-non-match-action 'ivy-magic-slash-non-match-create)
+;;   (ivy-count-format "[%d/%d]")
+;;   (ivy-wrap t)
+;;   :config
+;;   (defun counsel-goto-local-home ()
+;;     "Go to the $HOME of the local machine."
+;;     (interactive)
+;;     (ivy--cd "~/")))
 
 (use-package color-rg
   :load-path (lambda () (expand-file-name "site-elisp/color-rg" user-emacs-directory))
@@ -1161,12 +1161,12 @@ leaves holiday \"National Day\" 2021-10-01 +5d,
        holiday \"Mid-Autumn Festival\" 2021-09-19 +2d
 ")
 
-(setenv "LC_ALL" "zh_CN.UTF-8")
-(setenv "LANG" "zh_CN.UTF-8")
-(setenv "LANGUAGE" "zh_CN.UTF-8")
-(setenv "LC_COLLATE" "zh_CN.UTF-8")
-(setenv "LC_CTYPE" "zh_CN.UTF-8")
-(setenv "LC_MESSAGES" "zh_CN.UTF-8")
-(setenv "LC_MONETARY" "zh_CN.UTF-8")
-(setenv "LC_NUMERIC" "zh_CN.UTF-8")
-(setenv "LC_TIME" "zh_CN.UTF-8")
+;; (setenv "LC_ALL" "zh_CN.UTF-8")
+;; (setenv "LANG" "zh_CN.UTF-8")
+;; (setenv "LANGUAGE" "zh_CN.UTF-8")
+;; (setenv "LC_COLLATE" "zh_CN.UTF-8")
+;; (setenv "LC_CTYPE" "zh_CN.UTF-8")
+;; (setenv "LC_MESSAGES" "zh_CN.UTF-8")
+;; (setenv "LC_MONETARY" "zh_CN.UTF-8")
+;; (setenv "LC_NUMERIC" "zh_CN.UTF-8")
+;; (setenv "LC_TIME" "zh_CN.UTF-8")
