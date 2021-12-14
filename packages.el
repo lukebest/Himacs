@@ -9,14 +9,14 @@
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;(package! some-package)
 (package! verilog-mode)
-(package! diminish)
+;; (package! diminish)
 ;; (package! crux)
-(package! color-rg
-          :recipe (:host github :repo "manateelazycat/color-rg"))
-(package! find-file-in-project)
-(package! disk-usage)
-(package! winner)
-(package! which-key)
+;; (package! color-rg
+;;           :recipe (:host github :repo "manateelazycat/color-rg"))
+;; (package! find-file-in-project)
+;; (package! disk-usage)
+;; (package! winner)
+;; (package! which-key)
 (package! popup-kill-ring)
 (package! discover-my-major)
 (package! aweshell
@@ -25,13 +25,14 @@
 (package! multi-term)
 (package! term-keys
           :recipe (:host github :repo "CyberShadow/term-keys"))
+
 (package! page-break-lines)
-(package! yasnippet-snippets)
-(package! dumb-jump)
+;; (package! yasnippet-snippets)
+;; (package! dumb-jump)
 ;; (package! format-all)
 (package! awesome-pair
           :recipe (:host github :repo "manateelazycat/awesome-pair"))
-(package! conf-mode)
+;; (package! conf-mode)
 (package! delete-block
           :recipe (:host github :repo "manateelazycat/delete-block"))
 
@@ -44,8 +45,8 @@
           :recipe (:host github :repo "DogLooksGood/emacs-rime"))
 (package! citre
           :recipe (:host github :repo "universal-ctags/citre"))
-(package! snails
-          :recipe (:host github :repo "manateelazycat/snails"))
+;; (package! snails
+;;           :recipe (:host github :repo "manateelazycat/snails"))
 
 ;; To install a package directly from a remote git repo, you must specify a
 ;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
