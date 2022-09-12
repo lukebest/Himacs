@@ -41,6 +41,12 @@
 (package! magit-gerrit
   :recipe (:host github :repo "emacsorphanage/magit-gerrit"))
 
+(package! vline-mode
+  :recipe (:host github :repo "EricCrosson/vline-mode"))
+
+;; (package! snails
+ ;; :recipe (:host github :repo "manateelazycat/snails"))
+
 ;; To install a package directly from a remote git repo, you must specify a
 ;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
 ;; https://github.com/raxod502/straight.el#the-recipe-format

@@ -609,6 +609,9 @@ FACE defaults to inheriting from default and highlight."
 (use-package evil-matchit)
 (global-evil-matchit-mode 1)
 
+(use-package vline-mode)
+(vline-global-mode 1)
+
 ;; Indentation Configuration
 (setq-default indent-tabs-mode nil)
 (setq-default indent-line-function 'insert-tab)
@@ -650,18 +653,18 @@ FACE defaults to inheriting from default and highlight."
 ;; roam v2 configuration
 (setq org-roam-directory "~/org/")
 
-(use-package rime
-	:custom
-	(setq rime-translate-keybindings
-		    '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
-	(setq rime-show-candidate 'posframe)
-	(setq rime-disable-predicates
-		    '(rime-predicate-evil-mode-p
-			    rime-predicate-after-alphabet-char-p
-				  rime-predicate-prog-in-code-p))
-	(setq mode-line-mule-info '((:eval (rime-lighter))))
-	(default-input-method "rime")
-  )
+;; (use-package rime
+;; 	:custom
+;; 	(setq rime-translate-keybindings
+;; 		    '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
+;; 	(setq rime-show-candidate 'posframe)
+;; 	(setq rime-disable-predicates
+;; 		    '(rime-predicate-evil-mode-p
+;; 			    rime-predicate-after-alphabet-char-p
+;; 				  rime-predicate-prog-in-code-p))
+;; 	(setq mode-line-mule-info '((:eval (rime-lighter))))
+;; 	(default-input-method "rime")
+;;   )
 
 (use-package citre
   :defer t
@@ -669,9 +672,9 @@ FACE defaults to inheriting from default and highlight."
   ;; This is needed in `:init' block for lazy load to work.
   (require 'citre-config)
   ;; Bind your frequently used commands.
-  (global-set-key (kbd "<f5>") 'citre-jump)
-  (global-set-key (kbd "<f6>") 'citre-jump-back)
-  (global-set-key (kbd "<f4>") 'citre-ace-peek)
+  (global-set-key (kbd "<f4>") 'citre-jump)
+  (global-set-key (kbd "<f5>") 'citre-jump-back)
+  (global-set-key (kbd "<f6>") 'citre-ace-peek)
   (global-set-key (kbd "C-M-i") 'citre-completion-at-point)
   :config
   (setq

@@ -3,8 +3,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files
-   '("/home/l00549596/oml/work.org" "/home/l00549596/oml/vsc.org" "/home/l00549596/oml/1981.org" "/home/l00549596/org/20210716095324-验证与ai结合思路.org" "/home/l00549596/org/20210716114607-躺平与觉醒.org" "/home/l00549596/org/20210716145015-设计模式.org" "/home/l00549596/org/20210716162547-奥地利学派.org" "/home/l00549596/org/20210721163637-有限理性.org" "/home/l00549596/org/projects.org" "/home/l00549596/org/todo.org" "/home/l00549596/org/后特朗普时代的经济变局.org" "/home/l00549596/org/沉默进化.org" "/home/l00549596/org/第一公里.org" "/home/l00549596/org/记录.org"))
  '(verilog-align-ifelse t)
  '(verilog-auto-delete-trailing-whitespace t)
  '(verilog-auto-lineup 'all)
